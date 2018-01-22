@@ -5,20 +5,23 @@
 * 标记指定日期（marker）
 * 跳转到指定日期
 
-
-# ![preview](C:\abcccccc\android-week-calendar\images\preview.gif)
+<div style = "float:center">
+    <img src="https://github.com/chenyongci/android-week-calendar/blob/master/images/preview.gif" width="240">
 
 
 #### 使用方法
 
 #####在layout中使用:
+
 ```xml
 <com.android.calendarlibrary.CollapseCalendarView
         android:id="@+id/calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 ```
+
 #####使用此方法初始化日历标记数据
+
 ```java
 mManager = new CalendarManager(LocalDate.now(),
                 CalendarManager.State.MONTH,
@@ -26,7 +29,9 @@ mManager = new CalendarManager(LocalDate.now(),
                 LocalDate.now().plusYears(100));
 calendarView.init(mManager);
 ```
+
 #####使用方法设置日历数据
+
 是否显示农历
 ```java
 calendarView.showChinaDay(true);
@@ -46,7 +51,9 @@ calendarView.populateLayout();
 calendarView.setArrayData(json);
 calendarView.populateLayout();
 ```
+
 #####使用方法添加上相关监听
+
 月份切换监听器
 ```java
 mManager.setMonthChangeListener(new CalendarManager.OnMonthChangeListener() {
@@ -66,6 +73,7 @@ calendarView.setDateSelectListener(new CollapseCalendarView.OnDateSelect() {
        }
 });
 ```
+
 #####thanks
 
 [**android-collapse-calendar-view**](https://github.com/blazsolar/android-collapse-calendar-view)
