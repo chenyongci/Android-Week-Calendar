@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.android.calendarlibrary.CollapseCalendarView
+        android:id="@+id/calendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Switch
+        android:id="@+id/switch_china_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="显示农历"
+        app:layout_constraintTop_toBottomOf="@+id/calendar"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="144dp" />
+
+    <Button
+        android:id="@+id/btn_changemode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="切换星月"
+        tools:layout_editor_absoluteX="147dp"
+        tools:layout_editor_absoluteY="445dp"
+        app:layout_constraintTop_toBottomOf="@+id/switch_china_day"
+        tools:ignore="MissingConstraints" />
+
+    <Button
+        android:id="@+id/btn_today"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="回到今天"
+        tools:layout_editor_absoluteX="147dp"
+        tools:layout_editor_absoluteY="502dp"
+        app:layout_constraintTop_toBottomOf="@+id/btn_changemode"
+        tools:ignore="MissingConstraints" />
+
+</android.support.constraint.ConstraintLayout>

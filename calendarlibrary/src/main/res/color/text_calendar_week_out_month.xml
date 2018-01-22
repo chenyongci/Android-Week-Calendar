@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:lib="http://schemas.android.com/apk/res-auto">
+
+    <item android:state_enabled="false" lib:state_current="true" android:color="@color/cal_text_light"/>
+    <item android:state_selected="true" lib:state_current="true" android:color="@android:color/white"/>
+    <item android:state_pressed="true" lib:state_current="true" android:color="@android:color/white"/>
+    <item lib:state_current="true" android:color="@color/cal_blue_light"/>
+
+</selector>

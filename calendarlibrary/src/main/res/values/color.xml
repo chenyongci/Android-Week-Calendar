@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- calendar color -->
+    <color name="cal_text_normal">#4A4A4A</color>
+    <color name="cal_text_light">#ababab</color>
+    <color name="cal_text_super_light">#c0c0c0</color>
+    <color name="cal_blue_light">#88F37B7A</color>
+    <color name="cal_blue_dark">#336F9C</color>
+    <color name="cal_stroke">#77d4f6</color>
+    <color name="cal_days_title">#F5F5F5</color>
+    <color name="cal_vertical_line">#E9F6FF</color>
+    <color name="cal_line_grey">#9B9B9B</color>
+    <color name="cal_line_gray">#777777</color>
+    <color name="cal_color_white">#FFFFFF</color>
+    <color name="cal_color_red">#FFE54E36</color>
+    <color name="cal_color_green">#3DDAA6</color>
+    <color name="cal_color_point_blue">#FFFC5C99</color>
+
+</resources>
