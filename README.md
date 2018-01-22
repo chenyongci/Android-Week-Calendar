@@ -1,4 +1,5 @@
 #### 主要特性
+
 * 设置自定义日期角标
 * 左右滑动切换上下周月，上下滑动切换周月模式
 * 抽屉式周月切换效果
@@ -11,7 +12,7 @@
 
 #### 使用方法
 
-#####在layout中使用:
+##### 在layout中使用:
 
 ```xml
 <com.android.calendarlibrary.CollapseCalendarView
@@ -20,7 +21,7 @@
         android:layout_height="wrap_content" />
 ```
 
-#####使用此方法初始化日历标记数据
+##### 使用此方法初始化日历标记数据
 
 ```java
 mManager = new CalendarManager(LocalDate.now(),
@@ -30,7 +31,7 @@ mManager = new CalendarManager(LocalDate.now(),
 calendarView.init(mManager);
 ```
 
-#####使用方法设置日历数据
+##### 使用方法设置日历数据
 
 是否显示农历
 ```java
@@ -52,7 +53,7 @@ calendarView.setArrayData(json);
 calendarView.populateLayout();
 ```
 
-#####使用方法添加上相关监听
+##### 使用方法添加上相关监听
 
 月份切换监听器
 ```java
@@ -74,6 +75,6 @@ calendarView.setDateSelectListener(new CollapseCalendarView.OnDateSelect() {
 });
 ```
 
-#####thanks
+##### thanks
 
 [**android-collapse-calendar-view**](https://github.com/blazsolar/android-collapse-calendar-view)
