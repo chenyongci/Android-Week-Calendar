@@ -1,4 +1,4 @@
-#### 主要特性
+## 主要特性
 
 * 设置自定义日期角标
 * 左右滑动切换上下周月，上下滑动切换周月模式
@@ -10,9 +10,9 @@
     <img src="https://github.com/chenyongci/android-week-calendar/blob/master/images/preview.gif" width="240">
 
 
-#### 使用方法
+## 使用方法
 
-##### 在layout中使用:
+#### 在layout中使用:
 
 ```xml
 <com.android.calendarlibrary.CollapseCalendarView
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content" />
 ```
 
-##### 使用此方法初始化日历标记数据
+#### 使用此方法初始化日历标记数据
 
 ```java
 mManager = new CalendarManager(LocalDate.now(),
@@ -31,7 +31,7 @@ mManager = new CalendarManager(LocalDate.now(),
 calendarView.init(mManager);
 ```
 
-##### 使用方法设置日历数据
+#### 使用方法设置日历数据
 
 是否显示农历
 ```java
@@ -53,7 +53,7 @@ calendarView.setArrayData(json);
 calendarView.populateLayout();
 ```
 
-##### 使用方法添加上相关监听
+####  使用方法添加上相关监听
 
 月份切换监听器
 ```java
@@ -75,6 +75,24 @@ calendarView.setDateSelectListener(new CollapseCalendarView.OnDateSelect() {
 });
 ```
 
-##### thanks
+## Special Thanks
 
-[**android-collapse-calendar-view**](https://github.com/blazsolar/android-collapse-calendar-view)
+[**android-collapse-calendar-view**](https://github.com/blazsolar/android-collapse-calendar-view)for helping me out with android-week-calendar.
+
+
+## License
+
+
+    Copyright 2017 Vipul Asri
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+       http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or 		implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
