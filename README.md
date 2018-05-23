@@ -75,9 +75,9 @@ calendarView.setDateSelectListener(new CollapseCalendarView.OnDateSelect() {
 });
 ```
 
-## Special Thanks
+## 特别感谢
 
-[**android-collapse-calendar-view**](https://github.com/blazsolar/android-collapse-calendar-view)for helping me out with android-week-calendar.
+[**android-collapse-calendar-view**](https://github.com/blazsolar/android-collapse-calendar-view)
 
 
 ## License
