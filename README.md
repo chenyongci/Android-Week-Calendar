@@ -9,7 +9,7 @@
 <div style = "float:center">
     <img src="https://github.com/chenyongci/android-week-calendar/blob/master/screenshot/preview.gif" width="240">
 
-![预览图片](/screenshot/shot.png)
+![预览图片](/screenshot/shot.jpg)
 
 ## 使用方法
 
