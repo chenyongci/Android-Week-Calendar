@@ -7,7 +7,7 @@
 * 跳转到指定日期
 
 <div style = "float:center">
-    <img src="https://github.com/chenyongci/android-week-calendar/blob/master/images/preview.gif" width="240">
+    <img src="https://github.com/chenyongci/android-week-calendar/blob/master/screenshot/preview.gif" width="240">
 
 
 ## 使用方法
@@ -74,6 +74,10 @@ calendarView.setDateSelectListener(new CollapseCalendarView.OnDateSelect() {
        }
 });
 ```
+## APK
+安装 [apk](https://www.pgyer.com/BMmh) 文件预览效果，或者通过下面二维码去下载安装：
+
+![DEMO下载二维码](/screenshot/BMmh.png)
 
 ## 特别感谢
 
