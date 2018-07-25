@@ -1,6 +1,7 @@
 ## 主要特性
 
 * 设置自定义日期角标
+* 农历切换
 * 左右滑动切换上下周月，上下滑动切换周月模式
 * 抽屉式周月切换效果
 * 标记指定日期（marker）
@@ -79,10 +80,6 @@ calendarView.setDateSelectListener(new CollapseCalendarView.OnDateSelect() {
 安装 [apk](https://www.pgyer.com/BMmh) 文件预览效果，或者通过下面二维码去下载安装：
 
 ![DEMO下载二维码](/screenshot/BMmh.png)
-
-## 特别感谢
-
-[**android-collapse-calendar-view**](https://github.com/blazsolar/android-collapse-calendar-view)
 
 
 ## License
