@@ -28,6 +28,7 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:layout_weight="1"
+                android:text="标题"
                 android:textColor="@color/cal_text_normal"
                 android:textSize="18sp"/>
 
@@ -50,6 +51,7 @@
             android:textColor="@android:color/white"
             android:textSize="20sp"
             android:minHeight="48dp"
+            android:text="标题"
             android:gravity="center"
             android:singleLine="true"
             android:visibility="gone"/>

@@ -1,10 +1,12 @@
 package com.android.calendarlibrary;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,14 +18,18 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.calendarlibrary.listener.OnDateSelect;
+import com.android.calendarlibrary.listener.OnTitleClickListener;
 import com.android.calendarlibrary.manager.CalendarManager;
 import com.android.calendarlibrary.manager.Day;
+import com.android.calendarlibrary.manager.Formatter;
 import com.android.calendarlibrary.manager.Month;
 import com.android.calendarlibrary.manager.ResizeManager;
 import com.android.calendarlibrary.manager.Week;
 import com.android.calendarlibrary.widget.DayView;
 import com.android.calendarlibrary.widget.WeekView;
 
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.json.JSONObject;
 
@@ -34,10 +40,7 @@ import java.util.List;
 import java.util.Queue;
 
 
-/**
- * Created by Blaz Solar on 16/04/14.
- */
-@SuppressLint({ "SimpleDateFormat", "NewApi" })
+
 public class CollapseCalendarView extends LinearLayout implements View.OnClickListener {
 
 	public static final String TAG = "CalendarView";
@@ -56,11 +59,14 @@ public class CollapseCalendarView extends LinearLayout implements View.OnClickLi
 	private TextView mSelectionText;
 	private LinearLayout mHeader;
 	private ResizeManager mResizeManager;
+
+	private boolean initialized;
+
+
 	private ImageView mIvPre;
 	private ImageView mIvNext;
 	private Animation left_in;
 	private Animation right_in;
-	private boolean initialized;
 	private String[] weeks;
 	private OnTitleClickListener titleClickListener;
 
@@ -70,8 +76,176 @@ public class CollapseCalendarView extends LinearLayout implements View.OnClickLi
 
 	public CollapseCalendarView(Context context) {
 		this(context, null);
-		onFinishInflate();
+		//onFinishInflate();
 	}
+
+
+	public CollapseCalendarView(Context context, AttributeSet attrs) {
+		this(context, attrs, R.attr.calendarViewStyle);
+	}
+
+
+
+	public CollapseCalendarView(Context context, AttributeSet attrs, int defStyle) {
+		super(context, attrs, defStyle);
+
+		mInflater = LayoutInflater.from(context);
+		mResizeManager = new ResizeManager(this);
+		inflate(context, R.layout.calendar_layout, this);
+		setOrientation(VERTICAL);
+
+
+		weeks = getResources().getStringArray(R.array.weeks);
+		setBackgroundColor(getResources().getColor(R.color.cal_color_white));
+		mIvPre = new ImageView(getContext());
+		mIvNext = new ImageView(getContext());
+		RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+		mIvPre.setLayoutParams(param);
+		mIvNext.setLayoutParams(param);
+		initAnim();
+	}
+
+
+	/**
+	 * 初始化日历管理器
+	 * @param manager 日历管理器对象
+	 */
+	public void init(@NonNull CalendarManager manager) {
+		if (manager != null) {
+
+			mManager = manager;
+
+			populateLayout();
+
+			if (mListener != null) {
+				mListener.onDateSelected(mManager.getSelectedDay());
+			}
+
+		}
+	}
+
+	public CalendarManager getManager() {
+		return mManager;
+	}
+
+	@Override
+	public void onClick(View v) {
+		Log.d(TAG, "On click");
+		if (mManager != null) {
+			int id = v.getId();
+			if (id == R.id.prev) {
+				prev();
+			} else if (id == R.id.next) {
+				Log.d(TAG, "next");
+				next();
+			} else if (id == R.id.title) {
+				if (titleClickListener != null) {
+					titleClickListener.onTitleClick();
+				}
+			}
+		}
+	}
+
+	@Override
+	protected void dispatchDraw(  Canvas canvas) {
+		mResizeManager.onDraw();
+		super.dispatchDraw(canvas);
+	}
+
+	public CalendarManager.State getState() {
+		if (mManager != null) {
+			return mManager.getState();
+		} else {
+			return null;
+		}
+	}
+
+	public void setListener(@Nullable OnDateSelect listener) {
+		mListener = listener;
+	}
+
+	/**
+	 * 设置日历标题
+	 * @param text
+	 */
+	public void setTitle(String text) {
+		if (TextUtils.isEmpty(text)) {
+			mHeader.setVisibility(View.VISIBLE);
+			mSelectionText.setVisibility(View.GONE);
+		} else {
+			mHeader.setVisibility(View.GONE);
+			mSelectionText.setVisibility(View.VISIBLE);
+			mSelectionText.setText(text);
+		}
+	}
+
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
+		return mResizeManager.onInterceptTouchEvent(ev);
+	}
+
+	@Override
+	public boolean onTouchEvent(  MotionEvent event) {
+		super.onTouchEvent(event);
+		return mResizeManager.onTouchEvent(event);
+	}
+
+	@Override
+	protected void onFinishInflate() {
+		super.onFinishInflate();
+
+		mTitleView = (TextView) findViewById(R.id.title);
+		mPrev = (ImageButton) findViewById(R.id.prev);
+		mNext = (ImageButton) findViewById(R.id.next);
+		mWeeksView = (LinearLayout) findViewById(R.id.weeks);
+
+		mHeader = (LinearLayout) findViewById(R.id.header);
+		mSelectionText = (TextView) findViewById(R.id.selection_title);
+
+		mTitleView.setOnClickListener(this);
+
+		mPrev.setOnClickListener(this);
+		mNext.setOnClickListener(this);
+
+		populateLayout();
+	}
+
+	/**
+	 * 绘制日历周标题
+	 */
+	private void populateDays() {
+
+		if (!initialized) {
+			CalendarManager manager = getManager();
+
+			if (manager != null) {
+				Formatter formatter = manager.getFormatter();
+
+				LinearLayout layout = (LinearLayout) findViewById(R.id.days);
+
+				LocalDate date = LocalDate.now().withDayOfWeek(DateTimeConstants.MONDAY);
+				for (int i = 0; i < 7; i++) {
+					TextView textView = (TextView) layout.getChildAt(i);
+
+					/*textView.setText(weeks[i]);
+					if (i > 4) {
+						textView.setTextColor(getResources().getColor(R.color.cal_blue_dark));
+					}*/
+					textView.setText(formatter.getDayName(date));
+
+					date = date.plusDays(1);
+				}
+
+				initialized = true;
+			}
+		}
+	}
+
+
+	public void setArrayData(JSONObject jsonObject){
+		this.dataObject = jsonObject;
+	}
+
 
 	public void showChinaDay(boolean showChinaDay){
 		this.showChinaDay = showChinaDay;
@@ -86,36 +260,6 @@ public class CollapseCalendarView extends LinearLayout implements View.OnClickLi
 		this.titleClickListener = titleClickListener;
 	}
 
-	public CollapseCalendarView(Context context, AttributeSet attrs) {
-		this(context, attrs, R.attr.calendarViewStyle);
-	}
-
-	public void setArrayData(JSONObject jsonObject){
-		this.dataObject = jsonObject;
-	}
-
-
-	public interface OnTitleClickListener{
-		public void onTitleClick();
-	}
-
-	@SuppressLint("NewApi")
-	public CollapseCalendarView(Context context, AttributeSet attrs, int defStyle) {
-		super(context, attrs, defStyle);
-		weeks = getResources().getStringArray(R.array.weeks);
-		mInflater = LayoutInflater.from(context);
-		mResizeManager = new ResizeManager(this);
-		inflate(context, R.layout.calendar_layout, this);
-		setOrientation(VERTICAL);
-		setBackgroundColor(getResources().getColor(R.color.cal_color_white));
-		mIvPre = new ImageView(getContext());
-		mIvNext = new ImageView(getContext());
-		RelativeLayout.LayoutParams param = new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-		mIvPre.setLayoutParams(param);
-		mIvNext.setLayoutParams(param);
-		initAnim();
-	}
-
 	/**
 	 * 初始化左右滑动动画
 	 */
@@ -124,20 +268,7 @@ public class CollapseCalendarView extends LinearLayout implements View.OnClickLi
 		right_in = AnimationUtils.makeInAnimation(getContext(), false);
 	}
 
-	/**
-	 * 初始化日历管理器
-	 * @param manager 日历管理器对象
-	 */
-	public void init(CalendarManager manager) {
-		if (manager != null) {
-			mManager = manager;
-			if (mListener != null) {
-				mListener.onDateSelected(mManager.getSelectedDay());
-			}
-			populateLayout();
 
-		}
-	}
 	/**
 	 * 切换到指定某天界面
 	 * @param date yyyy-MM-dd
@@ -160,60 +291,12 @@ public class CollapseCalendarView extends LinearLayout implements View.OnClickLi
 	}
 
 
-	public CalendarManager getManager() {
-		return mManager;
-	}
-
-	@Override
-	public void onClick(View v) {
-		if (mManager != null) {
-			int id = v.getId();
-			if (id == R.id.prev) {
-				prev();
-			} else if (id == R.id.next) {
-				next();
-			} else if (id == R.id.title) {
-				if (titleClickListener != null) {
-					titleClickListener.onTitleClick();
-				}
-			}
-		}
-	}
-
-	@SuppressLint("WrongCall")
-	@Override
-	protected void dispatchDraw(  Canvas canvas) {
-		mResizeManager.onDraw();
-		super.dispatchDraw(canvas);
-	}
-
-
-	public CalendarManager.State getState() {
-		if (mManager != null) {
-			return mManager.getState();
-		} else {
-			return null;
-		}
-	}
 
 	public void setDateSelectListener(OnDateSelect listener) {
 		mListener = listener;
 	}
 
-	/**
-	 * 设置日历标题
-	 * @param text
-	 */
-	public void setTitle(String text) {
-		if (TextUtils.isEmpty(text)) {
-			mHeader.setVisibility(View.VISIBLE);
-			mSelectionText.setVisibility(View.GONE);
-		} else {
-			mHeader.setVisibility(View.GONE);
-			mSelectionText.setVisibility(View.VISIBLE);
-			mSelectionText.setText(text);
-		}
-	}
+
 	/**
 	 * 显示日历自带标题
 	 */
@@ -227,16 +310,7 @@ public class CollapseCalendarView extends LinearLayout implements View.OnClickLi
 		mHeader.setVisibility(View.GONE);
 	}
 
-	@Override
-	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		return mResizeManager.onInterceptTouchEvent(ev);
-	}
 
-	@Override
-	public boolean onTouchEvent(  MotionEvent event) {
-		super.onTouchEvent(event);
-		return mResizeManager.onTouchEvent(event);
-	}
 	/**
 	 * 周-月
 	 */
@@ -255,40 +329,7 @@ public class CollapseCalendarView extends LinearLayout implements View.OnClickLi
 		}
 	}
 
-	@Override
-	protected void onFinishInflate() {
-		super.onFinishInflate();
-		mTitleView = (TextView) findViewById(R.id.title);
-		mTitleView.setOnClickListener(this);
-		mPrev = (ImageButton) findViewById(R.id.prev);
-		mNext = (ImageButton) findViewById(R.id.next);
-		mWeeksView = (LinearLayout) findViewById(R.id.weeks);
-		mHeader = (LinearLayout) findViewById(R.id.header);
-		mSelectionText = (TextView) findViewById(R.id.selection_title);
-		mPrev.setOnClickListener(this);
-		mNext.setOnClickListener(this);
-		populateLayout();
-	}
 
-	/**
-	 * 绘制日历周标题
-	 */
-	private void populateDays() {
-		if (!initialized) {
-			CalendarManager manager = getManager();
-			if (manager != null) {
-				LinearLayout layout = (LinearLayout) findViewById(R.id.days);
-				for (int i = 0; i < 7; i++) {
-					TextView textView = (TextView) layout.getChildAt(i);
-					textView.setText(weeks[i]);
-					if (i > 4) {
-						textView.setTextColor(getResources().getColor(R.color.cal_blue_dark));
-					}
-				}
-				initialized = true;
-			}
-		}
-	}
 
 	/**
 	 * 刷新日历View
@@ -344,12 +385,40 @@ public class CollapseCalendarView extends LinearLayout implements View.OnClickLi
 		}
 	}
 
-	private void populateWeekLayout(  Week week,   WeekView weekView) {
+	private void populateWeekLayout(@NonNull Week week, @NonNull WeekView weekView) {
 
 		List<Day> days = week.getDays();
 		for (int i = 0; i < 7; i++) {
 			final Day day = days.get(i);
 			LinearLayout layout = (LinearLayout) weekView.getChildAt(i);
+
+
+			/*DayView dayView = (DayView) weekView.getChildAt(i);
+			dayView.setText(day.getText());
+			dayView.setSelected(day.isSelected());
+			dayView.setCurrent(day.isCurrent());
+
+			boolean enables = day.isEnabled();
+			dayView.setEnabled(enables);
+
+			if (enables) {
+				dayView.setOnClickListener(new OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						LocalDate date = day.getDate();
+						if (mManager.selectDay(date)) {
+							populateLayout();
+							if (mListener != null) {
+								mListener.onDateSelected(date);
+							}
+						}
+					}
+				});
+			} else {
+				dayView.setOnClickListener(null);
+			}*/
+
+
 			DayView dayView = (DayView) layout.findViewById(R.id.tvDayView);
 			DayView chinaDay = (DayView) layout.findViewById(R.id.tvChina);
 			if (showChinaDay) {
@@ -367,9 +436,9 @@ public class CollapseCalendarView extends LinearLayout implements View.OnClickLi
 					tvDayTypeRight.setText(jsonObject.optString("type"));
 					tvDayTypeRight.setVisibility(View.VISIBLE);
 					if (jsonObject.optString("type").equals("假")) {
-						tvDayTypeRight.setBackground(getResources().getDrawable(R.drawable.bg_day_type_red));
+						tvDayTypeRight.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_day_type_red));
 					} else if (jsonObject.optString("type").equals("班")) {
-						tvDayTypeRight.setBackground(getResources().getDrawable(R.drawable.bg_day_type_blue));
+						tvDayTypeRight.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_day_type_blue));
 					}
 				} else {
 					tvDayTypeRight.setVisibility(View.GONE);
@@ -439,18 +508,18 @@ public class CollapseCalendarView extends LinearLayout implements View.OnClickLi
 						chinaDay.setTextColor(getResources().getColorStateList(R.color.text_calendar_out_month));
 					}
 				}
-				layout.setBackground(getResources().getDrawable(R.drawable.bg_btn_calendar_today_selected));
-				viewPoint.setBackground(getResources().getDrawable(R.drawable.bg_calendar_point_white));
+				layout.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_btn_calendar_today_selected));
+				viewPoint.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_calendar_point_white));
 				layout.setSelected(true);
 			} else if (day.getDate().equals(mManager.getToday())) {
 				//日期对象今天
-				viewPoint.setBackground(getResources().getDrawable(R.drawable.bg_calendar_point_blue));
-				layout.setBackground(getResources().getDrawable(R.drawable.bg_btn_calendar_today));
+				viewPoint.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_calendar_point_blue));
+				layout.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_btn_calendar_today));
 				layout.setSelected(true);
 			} else {
 				//日期对象被选中
-				viewPoint.setBackground(getResources().getDrawable(R.drawable.bg_calendar_point_blue));
-				layout.setBackground(getResources().getDrawable(R.drawable.bg_btn_calendar));
+				viewPoint.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_calendar_point_blue));
+				layout.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_btn_calendar));
 			}
 			dayView.setCurrent(day.isCurrent());
 			boolean enables = day.isEnabled();
@@ -584,7 +653,5 @@ public class CollapseCalendarView extends LinearLayout implements View.OnClickLi
 		}
 	}
 
-	public interface OnDateSelect {
-		public void onDateSelected(LocalDate date);
-	}
+
 }

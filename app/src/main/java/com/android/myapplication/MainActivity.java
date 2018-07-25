@@ -7,6 +7,9 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import com.android.calendarlibrary.CollapseCalendarView;
+import com.android.calendarlibrary.listener.OnDateSelect;
+import com.android.calendarlibrary.listener.OnMonthChangeListener;
+import com.android.calendarlibrary.listener.OnTitleClickListener;
 import com.android.calendarlibrary.manager.CalendarManager;
 
 import org.joda.time.LocalDate;
@@ -48,10 +51,9 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         mManager = new CalendarManager(LocalDate.now(),
                 CalendarManager.State.MONTH,
-                LocalDate.now().withYear(100),
-                LocalDate.now().plusYears(100));
+                LocalDate.now(),
+                LocalDate.now().plusYears(1));
         calendarView.init(mManager);
-
 
         calendarView.showChinaDay(true);
 
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         /**
          *月份切换监听器
          */
-        mManager.setMonthChangeListener(new CalendarManager.OnMonthChangeListener() {
+        mManager.setMonthChangeListener(new OnMonthChangeListener() {
 
             @Override
             public void monthChange(String month, LocalDate mSelected) {
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         /**
          * 日期选中监听器
          */
-        calendarView.setDateSelectListener(new CollapseCalendarView.OnDateSelect() {
+        calendarView.setDateSelectListener(new OnDateSelect() {
 
             @Override
             public void onDateSelected(LocalDate date) {
@@ -94,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        calendarView.setTitleClickListener(new CollapseCalendarView.OnTitleClickListener() {
+        calendarView.setTitleClickListener(new OnTitleClickListener() {
 
             @Override
             public void onTitleClick() {

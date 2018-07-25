@@ -1,5 +1,7 @@
 package com.android.calendarlibrary.manager;
 
+import com.android.calendarlibrary.listener.OnMonthChangeListener;
+
 import org.joda.time.LocalDate;
 
 import java.util.Calendar;
@@ -22,15 +24,7 @@ public class CalendarManager {
 	private String monthStr = "";				//月份字符串
 	private OnMonthChangeListener monthChangeListener;
 	
-	public interface OnMonthChangeListener{
-		/**
-		 * 月份切换监听器
-		 * @param month	当前月份
-		 * @param mSelected	选中日期
-		 */
-		public void monthChange(String month, LocalDate mSelected);
-	}
-	
+
 	/**
 	 * 设置月份切换监听器
 	 * @param monthChangeListener
