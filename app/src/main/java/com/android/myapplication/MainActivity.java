@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        calendarView = findViewById(R.id.calendar);
-        switchChinaDay = findViewById(R.id.switch_china_day);
+        calendarView = (CollapseCalendarView) findViewById(R.id.calendar);
+        switchChinaDay = (Switch) findViewById(R.id.switch_china_day);
         initView();
         initListener();
         initData();
