@@ -82,12 +82,12 @@ calendarView.setDateSelectListener(new CollapseCalendarView.OnDateSelect() {
 ![DEMO下载二维码](/screenshot/BMmh.png)
 
 ## 感谢
-android-collapse-calendar-view(https://github.com/blazsolar/android-collapse-calendar-view)
+[android-collapse-calendar-view](https://github.com/blazsolar/android-collapse-calendar-view)
 
 ## License
 
 
-    Copyright 2017 chenyongci
+    Copyright 2018 chenyongci
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
