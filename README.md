@@ -59,7 +59,7 @@ calendarView.populateLayout();
 
 月份切换监听器
 ```java
-mManager.setMonthChangeListener(new CalendarManager.OnMonthChangeListener() {
+mManager.setMonthChangeListener(new OnMonthChangeListener() {
        @Override
       public void monthChange(String month, LocalDate mSelected) {
       // TODO Auto-generated method stub
@@ -69,7 +69,7 @@ mManager.setMonthChangeListener(new CalendarManager.OnMonthChangeListener() {
 ```
 日期选中监听器
 ```java
-calendarView.setDateSelectListener(new CollapseCalendarView.OnDateSelect() {
+calendarView.setDateSelectListener(new OnDateSelect() {
        @Override
        public void onDateSelected(LocalDate date) {
        // Toast.makeText(MainActivity.this, date.toString(), Toast.LENGTH_SHORT).show();
