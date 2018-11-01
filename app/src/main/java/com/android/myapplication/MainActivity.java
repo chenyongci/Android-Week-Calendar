@@ -51,11 +51,11 @@ public class MainActivity extends AppCompatActivity {
     private void initView() {
         mManager = new CalendarManager(LocalDate.now(),
                 CalendarManager.State.MONTH,
-                LocalDate.now(),
-                LocalDate.now().plusYears(1));
+                LocalDate.now(),//默认这个月，如果LocalDate.now().minusYears(1));
+                LocalDate.now().plusYears(1));//可以划之后一年
         calendarView.init(mManager);
 
-        calendarView.showChinaDay(true);
+        calendarView.showChinaDay(true);//显示农历
 
         switchChinaDay.setChecked(true);
     }
@@ -127,7 +127,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+    
+    
     private void initData() {
         Calendar cal = Calendar.getInstance();
 //		cal.set(Calendar.MONTH, 9);
@@ -155,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         }
         //设置数据显示
         calendarView.setArrayData(json);
+        //刷新日期
         calendarView.populateLayout();
     }
 }
